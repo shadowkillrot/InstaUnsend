@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "InstaUnsend",
+  "version": "1.0.0",
+  "description": "Surgical privacy tool for unsending Instagram direct messages with granular filtering, date-range targeting, and keyword search.",
+
+  "permissions": [
+    "sidePanel",
+    "activeTab",
+    "tabs",
+    "storage"
+  ],
+
+  "host_permissions": [
+    "https://www.instagram.com/*"
+  ],
+
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.instagram.com/direct/*"
+      ],
+      "js": [
+        "src/utils/constants.js",
+        "src/utils/logger.js",
+        "src/content/dom-selectors.js",
+        "src/content/event-simulator.js",
+        "src/content/message-classifier.js",
+        "src/content/date-filter.js",
+        "src/content/keyword-scanner.js",
+        "src/content/genesis-indexer.js",
+        "src/content/unsend-engine.js",
+        "src/content/content.js"
+      ],
+      "css": [
+        "src/content/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+
+  "action": {
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "48": "assets/icons/icon48.png"
+    },
+    "default_title": "Open InstaUnsend"
+  }
+}

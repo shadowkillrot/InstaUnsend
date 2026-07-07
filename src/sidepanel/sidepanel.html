@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InstaUnsend</title>
+
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="iu-app" id="app">
+
+    <!-- ═══════════════════ HEADER ═══════════════════ -->
+    <header class="iu-header">
+      <div class="iu-brand">
+        <div class="iu-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="igGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#833AB4"/>
+                <stop offset="50%" stop-color="#E1306C"/>
+                <stop offset="100%" stop-color="#FCB045"/>
+              </linearGradient>
+            </defs>
+            <rect x="2" y="2" width="20" height="20" rx="6" stroke="url(#igGrad)" stroke-width="2" fill="none"/>
+            <path d="M8 12L11 15L16 9" stroke="url(#igGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 class="iu-title">InstaUnsend</h1>
+      </div>
+      <div class="iu-connection" id="connectionStatus">
+        <span class="iu-status-dot" id="statusDot"></span>
+        <span class="iu-status-text" id="statusText">Connecting…</span>
+      </div>
+    </header>
+
+    <!-- ═══════════════════ GENESIS DASHBOARD ═══════════════════ -->
+    <section class="iu-section" id="genesisDashboard">
+      <div class="iu-section-header">
+        <h2>Chat Analysis</h2>
+        <span class="iu-badge" id="indexBadge">Not indexed</span>
+      </div>
+
+      <div class="iu-stats-grid">
+        <div class="iu-stat-card">
+          <div class="iu-stat-icon">💬</div>
+          <div class="iu-stat-value" id="statTotalMessages">—</div>
+          <div class="iu-stat-label">Total Messages</div>
+        </div>
+        <div class="iu-stat-card">
+          <div class="iu-stat-icon">📝</div>
+          <div class="iu-stat-value" id="statOldestText">—</div>
+          <div class="iu-stat-label">Oldest Text</div>
+        </div>
+        <div class="iu-stat-card">
+          <div class="iu-stat-icon">📷</div>
+          <div class="iu-stat-value" id="statOldestPhoto">—</div>
+          <div class="iu-stat-label">Oldest Photo</div>
+        </div>
+        <div class="iu-stat-card">
+          <div class="iu-stat-icon">🎤</div>
+          <div class="iu-stat-value" id="statOldestVoice">—</div>
+          <div class="iu-stat-label">Oldest Voice</div>
+        </div>
+      </div>
+
+      <button class="iu-btn iu-btn-primary iu-btn-full" id="btnIndex">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <span>Index This Chat</span>
+      </button>
+    </section>
+
+    <!-- ═══════════════════ FILTER SECTION ═══════════════════ -->
+    <section class="iu-section iu-disabled" id="filterSection">
+      <div class="iu-section-header">
+        <h2>Targeting Filters</h2>
+      </div>
+
+      <!-- Media Type Toggles -->
+      <div class="iu-filter-group">
+        <label class="iu-filter-label">Message Types</label>
+        <div class="iu-media-toggles" id="mediaToggles">
+          <button class="iu-media-btn active" data-type="text" title="Text messages">
+            <span class="iu-media-icon">✉️</span>
+            <span>Text</span>
+          </button>
+          <button class="iu-media-btn active" data-type="photo" title="Photos & images">
+            <span class="iu-media-icon">📷</span>
+            <span>Photos</span>
+          </button>
+          <button class="iu-media-btn active" data-type="voice" title="Voice notes">
+            <span class="iu-media-icon">🎤</span>
+            <span>Voice</span>
+          </button>
+          <button class="iu-media-btn active" data-type="reel" title="Reels & shared posts">
+            <span class="iu-media-icon">🎬</span>
+            <span>Reels</span>
+          </button>
+        </div>
+        <button class="iu-nuclear-btn" id="btnNuclear" title="Select ALL message types">
+          <span>☢️</span>
+          <span>Nuclear — Select All</span>
+        </button>
+      </div>
+
+      <!-- Date Range -->
+      <div class="iu-filter-group">
+        <label class="iu-filter-label">Date Range</label>
+        <div class="iu-date-range">
+          <div class="iu-input-wrap">
+            <label for="dateStart">From</label>
+            <input type="date" id="dateStart" class="iu-input">
+          </div>
+          <div class="iu-input-wrap">
+            <label for="dateEnd">To</label>
+            <input type="date" id="dateEnd" class="iu-input">
+          </div>
+        </div>
+      </div>
+
+      <!-- Keyword Search -->
+      <div class="iu-filter-group">
+        <label class="iu-filter-label">Keyword Search</label>
+        <div class="iu-keyword-wrap">
+          <input type="text" id="keywordInput" class="iu-input" placeholder="Enter word, phrase, or regex…">
+          <div class="iu-regex-toggle">
+            <input type="checkbox" id="regexToggle" class="iu-checkbox">
+            <label for="regexToggle" class="iu-regex-label">Regex</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ ACTIONS ═══════════════════ -->
+    <section class="iu-section" id="actionSection">
+      <div class="iu-action-bar">
+        <button class="iu-btn iu-btn-danger iu-btn-full" id="btnUnsend" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          <span>Initialize Unsend</span>
+        </button>
+        <div class="iu-action-row">
+          <button class="iu-btn iu-btn-secondary" id="btnPause" disabled>
+            <span>⏸️ Pause</span>
+          </button>
+          <button class="iu-btn iu-btn-ghost" id="btnAbort" disabled>
+            <span>✖ Abort</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ PROGRESS ═══════════════════ -->
+    <section class="iu-section iu-hidden" id="progressSection">
+      <div class="iu-section-header">
+        <h2>Progress</h2>
+        <span class="iu-progress-pct" id="progressPct">0%</span>
+      </div>
+
+      <div class="iu-progress-track" id="progressTrack">
+        <div class="iu-progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+
+      <div class="iu-progress-stats">
+        <div class="iu-progress-stat">
+          <span class="iu-stat-num" id="progressCurrent">0</span>
+          <span class="iu-stat-sep">/</span>
+          <span class="iu-stat-num" id="progressTotal">0</span>
+          <span class="iu-stat-unit">messages</span>
+        </div>
+        <div class="iu-progress-eta" id="progressETA">ETA: calculating…</div>
+      </div>
+
+      <div class="iu-progress-status" id="progressStatus">Waiting to start…</div>
+    </section>
+
+    <!-- ═══════════════════ OPERATION LOG ═══════════════════ -->
+    <section class="iu-section" id="logSection">
+      <div class="iu-section-header">
+        <h2>Activity Log</h2>
+        <button class="iu-btn-icon" id="btnClearLog" title="Clear log">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>
+          </svg>
+        </button>
+      </div>
+      <div class="iu-log-entries" id="logEntries">
+        <div class="iu-log-empty">No activity yet. Index a chat to begin.</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="iu-footer">
+      <p>⚠️ Use responsibly. Automated actions may violate Instagram's ToS.</p>
+    </footer>
+
+  </div>
+
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+/* ═══════════════════════════════════════════════════════════════════
+   InstaUnsend — Content Script Styles
+   
+   Injected into instagram.com/direct pages. Minimal footprint —
+   only styles elements we add/modify during operation.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* Highlight the message currently being processed */
+[data-iu-processing="true"] {
+  outline: 2px solid rgba(131, 58, 180, 0.5) !important;
+  outline-offset: -2px;
+  border-radius: 8px;
+  transition: outline-color 0.3s ease, opacity 0.5s ease;
+  position: relative;
+}
+
+[data-iu-processing="true"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: rgba(131, 58, 180, 0.04);
+  pointer-events: none;
+  animation: iu-pulse-overlay 1.5s ease-in-out infinite;
+}
+
+@keyframes iu-pulse-overlay {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.08; }
+}
+
+/* Fade out messages that have been successfully unsent */
+[data-iu-done="true"] {
+  opacity: 0.25 !important;
+  transition: opacity 0.6s ease-out;
+  pointer-events: none;
+}
+
+/* Visual indicator that indexing scroll is active */
+[data-iu-scrolling="true"] {
+  scroll-behavior: auto !important;
+}
