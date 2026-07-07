@@ -110,8 +110,17 @@
           break;
         }
 
-        // Scroll to top
-        container.scrollTop = 0;
+        // Scroll to the oldest currently loaded message to trigger lazy loading
+        const rows = IU.Selectors.messageRows(container);
+        if (rows.length > 0) {
+          // rows[0] is typically the oldest message currently in the DOM
+          rows[0].scrollIntoView({ behavior: 'smooth', block: 'end' });
+        } else {
+          container.scrollTop = 0; // Fallback
+        }
+        
+        // Dispatch a scroll event just in case React needs it
+        container.dispatchEvent(new Event('scroll', { bubbles: true }));
 
         // Wait for React to hydrate new content
         await IU.EventSim.delay(SETTLE_TIME, SETTLE_TIME + 500);
