@@ -24,67 +24,70 @@
      * @returns {HTMLElement|null}
      */
     chatContainer() {
-      // Attempt 1: role="grid" — classic Instagram message list
-      const grid = document.querySelector('[role="grid"]');
-      if (grid) { IU.log.debug('chatContainer: found via role=grid'); return grid; }
-
-      // Attempt 2: role="list" — Instagram sometimes uses list role
-      const list = document.querySelector('section [role="list"], main [role="list"]');
-      if (list) { IU.log.debug('chatContainer: found via role=list'); return list; }
-
-      // Attempt 3: Look for the chat thread section — Instagram wraps
-      // the message area in a <section> or div near role="main"
-      const mainEl = document.querySelector('[role="main"]') || document.querySelector('main');
-      if (mainEl) {
-        // Find scrollable children using computed styles (not inline styles)
-        const allDivs = mainEl.querySelectorAll('div');
-        for (const div of allDivs) {
-          const computed = window.getComputedStyle(div);
-          const overflowY = computed.overflowY;
-          if (
-            (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
-            div.scrollHeight > 400 &&
-            div.clientHeight > 200
-          ) {
-            IU.log.debug('chatContainer: found via computed overflow in main');
-            return div;
-          }
-        }
-
-        // Also check for tabindex (often marks the focusable scroll region)
-        const tabIndexed = mainEl.querySelector('div[tabindex]');
-        if (tabIndexed && tabIndexed.scrollHeight > 300) {
-          IU.log.debug('chatContainer: found via tabindex in main');
-          return tabIndexed;
-        }
+      // The most reliable anchor is the message input box.
+      // The actual chat container is in the same structural block as the input box.
+      const inputBox = document.querySelector('textarea, [contenteditable="true"][role="textbox"]');
+      
+      let searchRoot = document;
+      if (inputBox) {
+        // Find the closest major wrapper (usually <section> or a major flex column)
+        // that contains both the chat and the input box.
+        searchRoot = inputBox.closest('section, main, [role="main"]') || document;
       }
 
-      // Attempt 4: Inline style overflow (older Instagram versions)
-      const inlineOverflow = document.querySelectorAll('div[style*="overflow"]');
-      for (const el of inlineOverflow) {
-        if (el.scrollHeight > 400 && el.clientHeight > 200) {
-          IU.log.debug('chatContainer: found via inline overflow style');
-          return el;
-        }
+      // Attempt 1: role="grid" inside the chat section
+      const grid = searchRoot.querySelector('[role="grid"]');
+      if (grid && grid.scrollHeight > 200) { 
+        IU.log.debug('chatContainer: found via role=grid inside chat section'); 
+        return grid; 
       }
 
-      // Attempt 5: Broadest heuristic — find the tallest scrollable div on the page
-      const allDivs = document.querySelectorAll('div');
-      let best = null;
-      let bestScore = 0;
+      // Attempt 2: role="list" inside the chat section
+      const list = searchRoot.querySelector('[role="list"]');
+      if (list && list.scrollHeight > 200) { 
+        IU.log.debug('chatContainer: found via role=list inside chat section'); 
+        return list; 
+      }
+
+      // Attempt 3: Find scrollable children using computed styles
+      // We look for the tallest scrollable div within the search root.
+      const allDivs = searchRoot.querySelectorAll('div');
+      let bestDiv = null;
+      let maxScore = 0;
+
       for (const div of allDivs) {
+        // Skip tiny divs to save performance
+        if (div.clientHeight < 200) continue;
+
         const computed = window.getComputedStyle(div);
         const overflowY = computed.overflowY;
-        if (overflowY === 'visible' || overflowY === 'hidden') continue;
-        const score = div.scrollHeight;
-        if (score > bestScore && div.clientHeight > 150) {
-          bestScore = score;
-          best = div;
+        
+        if (overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') {
+          // Score based on height and if it contains message-like text
+          let score = div.scrollHeight;
+          
+          // Bonus if it contains text direction nodes (common in IG messages)
+          if (div.querySelector('div[dir="auto"]')) {
+            score += 10000;
+          }
+
+          if (score > maxScore) {
+            maxScore = score;
+            bestDiv = div;
+          }
         }
       }
-      if (best) {
-        IU.log.debug('chatContainer: found via tallest-scrollable heuristic');
-        return best;
+
+      if (bestDiv) {
+        IU.log.debug('chatContainer: found via computed overflow scoring');
+        return bestDiv;
+      }
+
+      // Attempt 4: tabindex fallback
+      const tabIndexed = searchRoot.querySelector('div[tabindex]');
+      if (tabIndexed && tabIndexed.scrollHeight > 300) {
+        IU.log.debug('chatContainer: found via tabindex');
+        return tabIndexed;
       }
 
       IU.log.error('chatContainer: could not find any suitable container');
